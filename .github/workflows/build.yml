@@ -26,17 +26,17 @@ jobs:
         id: cache-depot-tools
         uses: actions/cache@v3
         with:
-          path: C:\src\depot_tools
+          path: C:\depot_tools
           key: ${{ runner.os }}-depot-tools
   
       - name: Download depot_tools
         if: steps.cache-depot-tools.outputs.cache-hit != 'true'
         run: |
-          Invoke-WebRequest -Uri "https://storage.googleapis.com/chrome-infra/depot_tools.zip" -OutFile "C:\src\depot_tools.zip"
-          Expand-Archive -LiteralPath 'C:\src\depot_tools.zip' -DestinationPath 'C:\src\depot_tools'
+          Invoke-WebRequest -Uri "https://storage.googleapis.com/chrome-infra/depot_tools.zip" -OutFile "C:\depot_tools.zip"
+          Expand-Archive -LiteralPath 'C:\depot_tools.zip' -DestinationPath 'C:\depot_tools'
 
       - name: Add depot_tools to path
-        run: Add-Content $env:GITHUB_PATH "C:\src\depot_tools"
+        run: Add-Content $env:GITHUB_PATH "C:\depot_tools"
 
       - run: |
           gclient
