@@ -27,41 +27,35 @@ jobs:
       - run:
           name: Configure Git
           shell: cmd.exe
-          command: |
-            git config --global core.autocrlf false
-            git config --global core.filemode false
+          command: git config --global core.autocrlf false && git config --global core.filemode false
       - run:
           name: Download V8
           shell: cmd.exe
-          command: |
-            set PATH=C:\depot_tools;%PATH%
-            mkdir C:\v8
-            cd C:\v8
-            fetch v8
+          command: set PATH=C:\depot_tools;%PATH% && mkdir v8 && cd v8 && fetch v8
       - run:
           name: Download build dependencies
           shell: cmd.exe
-          command: set PATH=C:\depot_tools;%PATH% && cd C:\v8\v8 && gclient sync
+          command: set PATH=C:\depot_tools;%PATH% && cd v8\v8 && gclient sync
       - run:
           name: Generate Build Files
           shell: cmd.exe
-          command: set PATH=C:\depot_tools;%PATH% && cd C:\v8\v8 && python3 tools\dev\v8gen.py x64.release
+          command: set PATH=C:\depot_tools;%PATH% && cd v8\v8 && python3 tools\dev\v8gen.py x64.release
       - run:
           name: Configure Build
           shell: bash.exe
           command: |
-            cd /c/v8/v8
+            cd v8/v8
             echo "is_component_build = false" >> out.gn/x64.release/args.gn
             echo "v8_static_library = true" >> out.gn/x64.release/args.gn
             cat out.gn/x64.release/args.gn
       - run:
           name: Run Build
           shell: cmd.exe
-          command: set PATH=C:\depot_tools;%PATH% && cd C:\v8\v8 && ninja -C out.gn\x64.release
+          command: set PATH=C:\depot_tools;%PATH% && cd v8\v8 && ninja -C out.gn\x64.release
       - run:
           name: Copy Build Files
           shell: bash.exe
-          command: cp -r /c/v8/v8/out.gn/x64.release /tmp/v8_x64_release
+          command: cp -r v8/v8/out.gn/x64.release /tmp/v8_x64_release
       - store_artifacts:
           path: /tmp/v8_x64_release
           destination: v8_x64_release
