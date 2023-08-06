@@ -10,6 +10,7 @@ jobs:
   build-win:
     executor:
       name: win/default
+      size: large
     environment:
       DEPOT_TOOLS_WIN_TOOLCHAIN: 0
     steps:
@@ -42,7 +43,7 @@ jobs:
       - run:
           name: Generate Build Files
           shell: cmd.exe
-          command: set PATH=C:\depot_tools;C:\win10sdk;%PATH% && cd v8\v8 && python3 tools\dev\v8gen.py -vv x64.release
+          command: set PATH=C:\depot_tools;%PATH% && cd v8\v8 && python3 tools\dev\v8gen.py -vv x64.release
       - run:
           name: Configure Build
           shell: bash.exe
@@ -54,7 +55,7 @@ jobs:
       - run:
           name: Run Build
           shell: cmd.exe
-          command: set PATH=C:\depot_tools;C:\win10sdk;%PATH% && cd v8\v8 && ninja -C out.gn\x64.release
+          command: set PATH=C:\depot_tools;%PATH% && cd v8\v8 && ninja -C out.gn\x64.release
       - run:
           name: Copy Build Files
           shell: bash.exe
