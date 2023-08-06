@@ -47,30 +47,30 @@ jobs:
       - name: Download V8
         shell: cmd
         run: |
+          C:
           mkdir v8
           cd v8
           fetch v8
-          cd v8
       - name: Download build dependencies
-        working-directory: v8/v8
+        working-directory: C:/v8/v8
         shell: cmd
         run: gclient sync
       - name: Generate Build Files
-        working-directory: v8/v8
+        working-directory: C:/v8/v8
         shell: cmd
         run: python3 tools\dev\v8gen.py x64.release
       - name: Configure Build
-        working-directory: v8/v8
+        working-directory: C:/v8/v8
         shell: bash
         run: |
           echo "is_component_build = false" >> out.gn/x64.release/args.gn
           echo "v8_static_library = true" >> out.gn/x64.release/args.gn
           cat out.gn/x64.release/args.gn
       - name: Run Build
-        working-directory: v8/v8
+        working-directory: C:/v8/v8
         shell: cmd
         run: ninja -C out.gn\x64.release
       - uses: actions/upload-artifact@v3
         with:
           name: v8_win_x64_release_lib
-          path: v8/v8/out.gn/x64.release
+          path: C:/v8/v8/out.gn/x64.release
