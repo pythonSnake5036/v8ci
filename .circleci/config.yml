@@ -20,13 +20,9 @@ jobs:
             Invoke-WebRequest -Uri "https://storage.googleapis.com/chrome-infra/depot_tools.zip" -OutFile "C:\depot_tools.zip"
             Expand-Archive -LiteralPath 'C:\depot_tools.zip' -DestinationPath 'C:\depot_tools'
       - run:
-          name: Add depot_tools to path
-          command: set PATH=C:\depot_tools;%PATH%
-          shell: cmd.exe
-      - run:
           name: Setup gclient
           shell: cmd.exe
-          command: gclient
+          command: set PATH=C:\depot_tools;%PATH% && gclient
       - run:
           name: Configure Git
           shell: cmd.exe
@@ -37,6 +33,7 @@ jobs:
           name: Download V8
           shell: cmd.exe
           command: |
+            set PATH=C:\depot_tools;%PATH%
             mkdir v8
             cd v8
             fetch v8
@@ -44,11 +41,11 @@ jobs:
       - run:
           name: Download build dependencies
           shell: cmd.exe
-          command: cd v8/v8 && gclient sync
+          command: set PATH=C:\depot_tools;%PATH% && cd v8/v8 && gclient sync
       - run:
           name: Generate Build Files
           shell: cmd.exe
-          command: cd v8/v8 && python3 tools\dev\v8gen.py x64.release
+          command: set PATH=C:\depot_tools;%PATH% && cd v8/v8 && python3 tools\dev\v8gen.py x64.release
       - run:
           name: Configure Build
           shell: bash.exe
@@ -60,7 +57,7 @@ jobs:
       - run:
           name: Run Build
           shell: cmd.exe
-          command: cd v8/v8 && ninja -C out.gn\x64.release
+          command: set PATH=C:\depot_tools;%PATH% && cd v8/v8 && ninja -C out.gn\x64.release
       - run:
           name: Copy Build Files
           shell: bash.exe
