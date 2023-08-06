@@ -58,7 +58,7 @@ jobs:
         working-directory: v8/v8
         shell: cmd
         run: |
-          python tools/dev/v8gen.py x64.release.sample
+          python3 tools/dev/v8gen.py x64.release.sample
           ninja -C out.gn/x64.release.sample v8_monolith
       - uses: actions/upload-artifact@v3
         with:
