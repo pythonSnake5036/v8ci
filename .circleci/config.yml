@@ -20,6 +20,13 @@ jobs:
             Invoke-WebRequest -Uri "https://storage.googleapis.com/chrome-infra/depot_tools.zip" -OutFile "C:\depot_tools.zip"
             Expand-Archive -LiteralPath 'C:\depot_tools.zip' -DestinationPath 'C:\depot_tools'
       - run:
+          name: Install Windows 10 SDK
+          command: |
+            Invoke-WebRequest -Uri https://go.microsoft.com/fwlink/?linkid=2237387 -OutFile "C:\winsdksetup.exe"
+            winsdksetup.exe /layout C:\win10sdk /quiet
+            cd C:\win10sdk
+            winsdksetup.exe /features + /quiet /norestart
+      - run:
           name: Setup gclient
           shell: cmd.exe
           command: set PATH=C:\depot_tools;%PATH% && gclient
@@ -38,7 +45,7 @@ jobs:
       - run:
           name: Generate Build Files
           shell: cmd.exe
-          command: set PATH=C:\depot_tools;%PATH% && cd v8\v8 && python3 tools\dev\v8gen.py -vv x64.release
+          command: set PATH=C:\depot_tools;C:\win10sdk;%PATH% && cd v8\v8 && python3 tools\dev\v8gen.py -vv x64.release
       - run:
           name: Configure Build
           shell: bash.exe
@@ -50,7 +57,7 @@ jobs:
       - run:
           name: Run Build
           shell: cmd.exe
-          command: set PATH=C:\depot_tools;%PATH% && cd v8\v8 && ninja -C out.gn\x64.release
+          command: set PATH=C:\depot_tools;C:\win10sdk;%PATH% && cd v8\v8 && ninja -C out.gn\x64.release
       - run:
           name: Copy Build Files
           shell: bash.exe
