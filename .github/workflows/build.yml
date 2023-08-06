@@ -39,4 +39,28 @@ jobs:
         run: Add-Content $env:GITHUB_PATH "C:\depot_tools"
 
       - run: gclient
-      - run: (Get-Command python).Path
+        shell: cmd
+      - name: Configure Git
+        run: |
+          git config --global core.autocrlf false
+          git config --global core.filemode false
+      - name: Download V8
+        run: |
+          mkdir v8
+          cd v8
+          fetch v8
+          cd v8
+      - name: Download build dependencies
+        working-directory: v8/v8
+        shell: cmd
+        run: gclient sync
+      - name: Compile
+        working-directory: v8/v8
+        shell: cmd
+        run: |
+          tools/dev/v8gen.py x64.release.sample
+          ninja -C out.gn/x64.release.sample v8_monolith
+      - uses: actions/upload-artifact@v3
+        with:
+          name: v8_win_x64_release_sample
+          path: v8/v8/out.gn/x64.release.sample
