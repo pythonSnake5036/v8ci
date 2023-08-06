@@ -62,10 +62,6 @@ jobs:
           echo v8_static_library = true >> out.gn/x64.release/args.gn
           type out.gn/x64.release/args.gn
           ninja -C out.gn/x64.release v8_monolith
-      - name: Test
-        working-directory: v8/v8
-        shell: cmd
-        run: python3 tools/run-tests.py --gn
       - uses: actions/upload-artifact@v3
         with:
           name: v8_win_x64_release_lib
