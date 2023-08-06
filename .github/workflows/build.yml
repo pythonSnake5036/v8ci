@@ -41,10 +41,12 @@ jobs:
       - run: gclient
         shell: cmd
       - name: Configure Git
+        shell: cmd
         run: |
           git config --global core.autocrlf false
           git config --global core.filemode false
       - name: Download V8
+        shell: cmd
         run: |
           mkdir v8
           cd v8
@@ -54,13 +56,16 @@ jobs:
         working-directory: v8/v8
         shell: cmd
         run: gclient sync
-      - name: Compile
+      - name: Generate Build Files
         working-directory: v8/v8
         shell: cmd
         run: |
           python3 tools\dev\v8gen.py x64.release
           echo v8_static_library = true >> out.gn\x64.release\args.gn
-          ninja -C out.gn\x64.release
+      - name: Run Build
+        working-directory: v8/v8
+        shell: cmd
+        run: ninja -C out.gn\x64.release
       - uses: actions/upload-artifact@v3
         with:
           name: v8_win_x64_release_lib
