@@ -15,8 +15,55 @@ jobs:
     steps:
       - checkout
       - run:
-          name: "Say hello"
-          command: "echo Hello, World!"
+          name: Install depot_tools
+          command: |
+            Invoke-WebRequest -Uri "https://storage.googleapis.com/chrome-infra/depot_tools.zip" -OutFile "C:\depot_tools.zip"
+            Expand-Archive -LiteralPath 'C:\depot_tools.zip' -DestinationPath 'C:\depot_tools'
+      - run:
+          name: Add depot_tools to path
+          command: set PATH=C:\depot_tools;%PATH%
+          shell: cmd.exe
+      - run:
+          name: Configure Git
+          shell: cmd.exe
+          command: |
+            git config --global core.autocrlf false
+            git config --global core.filemode false
+      - run:
+          name: Download V8
+          shell: cmd.exe
+          command: |
+            mkdir v8
+            cd v8
+            fetch v8
+            cd v8
+      - run:
+          name: Download build dependencies
+          shell: cmd.exe
+          command: cd v8/v8 && gclient sync
+      - run:
+          name: Generate Build Files
+          shell: cmd.exe
+          command: cd v8/v8 && python3 tools\dev\v8gen.py x64.release
+      - run:
+          name: Configure Build
+          shell: bash.exe
+          command: |
+            cd v8/v8
+            echo "is_component_build = false" >> out.gn/x64.release/args.gn
+            echo "v8_static_library = true" >> out.gn/x64.release/args.gn
+            cat out.gn/x64.release/args.gn
+      - run:
+          name: Run Build
+          shell: cmd.exe
+          command: cd v8/v8 && ninja -C out.gn\x64.release
+      - run:
+          name: Copy Build Files
+          shell: bash.exe
+          command: cp -r /v8/v8/out.gn/x64.release /tmp/v8_x64_release
+      - store_artifacts:
+          path: /tmp/v8_x64_release
+          destination: v8_x64_release
 
 # Orchestrate jobs using workflows
 # See: https://circleci.com/docs/configuration-reference/#workflows
