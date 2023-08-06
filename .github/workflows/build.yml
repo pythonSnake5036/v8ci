@@ -59,9 +59,14 @@ jobs:
       - name: Generate Build Files
         working-directory: v8/v8
         shell: cmd
+        run: python3 tools\dev\v8gen.py x64.release
+      - name: Configure Build
+        working-directory: v8/v8
+        shell: bash
         run: |
-          python3 tools\dev\v8gen.py x64.release
-          echo v8_static_library = true >> out.gn\x64.release\args.gn
+          echo "is_component_build = false" >> out.gn/x64.release/args.gn
+          echo "v8_static_library = true" >> out.gn/x64.release/args.gn
+          cat out.gn/x64.release/args.gn
       - name: Run Build
         working-directory: v8/v8
         shell: cmd
