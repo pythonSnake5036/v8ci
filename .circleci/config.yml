@@ -17,9 +17,7 @@ jobs:
           name: Install Windows 10 SDK
           command: |
             Invoke-WebRequest -Uri https://go.microsoft.com/fwlink/?linkid=2237387 -OutFile "C:\winsdksetup.exe"
-            C:\winsdksetup.exe /layout C:\win10sdk /quiet
-            cd C:\win10sdk
-            winsdksetup.exe /features + /quiet /norestart
+            C:\winsdksetup.exe /features + /quiet /norestart
       - run:
           name: Install depot_tools
           command: |
