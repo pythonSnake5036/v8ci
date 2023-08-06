@@ -60,8 +60,7 @@ jobs:
         run: |
           python3 tools/dev/v8gen.py x64.release
           echo v8_static_library = true >> out.gn/x64.release/args.gn
-          type out.gn/x64.release/args.gn
-          ninja -C out.gn/x64.release v8_monolith
+          ninja -C out.gn/x64.release
       - uses: actions/upload-artifact@v3
         with:
           name: v8_win_x64_release_lib
