@@ -8,7 +8,8 @@ orbs:
 # See: https://circleci.com/docs/configuration-reference/#jobs
 jobs:
   build-win:
-    executor: win/medium
+    executor:
+      name: win/default
     environment:
       DEPOT_TOOLS_WIN_TOOLCHAIN: 0
     steps:
@@ -20,6 +21,6 @@ jobs:
 # Orchestrate jobs using workflows
 # See: https://circleci.com/docs/configuration-reference/#workflows
 workflows:
-  say-hello-workflow:
+  build:
     jobs:
       - build-win
