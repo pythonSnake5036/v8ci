@@ -38,6 +38,5 @@ jobs:
       - name: Add depot_tools to path
         run: Add-Content $env:GITHUB_PATH "C:\depot_tools"
 
-      - run: |
-          gclient
-          where python
+      - run: gclient
+      - run: where python
