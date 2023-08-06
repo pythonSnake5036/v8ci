@@ -14,7 +14,7 @@ on:
 # A workflow run is made up of one or more jobs that can run sequentially or in parallel
 jobs:
   # This workflow contains a single job called "build"
-  build-win:
+  build-win-lib:
     # The type of runner that the job will run on
     runs-on: windows-2022
     env:
@@ -58,9 +58,15 @@ jobs:
         working-directory: v8/v8
         shell: cmd
         run: |
-          python3 tools/dev/v8gen.py x64.release.sample
-          ninja -C out.gn/x64.release.sample v8_monolith
+          python3 tools/dev/v8gen.py x64.release
+          echo v8_static_library = true >> out.gn/x64.release/args.gn
+          type out.gn/x64.release/args.gn
+          ninja -C out.gn/x64.release v8_monolith
+      - name: Test
+        working-directory: v8/v8
+        shell: cmd
+        run: python3 tools/run-tests.py --gn
       - uses: actions/upload-artifact@v3
         with:
-          name: v8_win_x64_release_sample
-          path: v8/v8/out.gn/x64.release.sample
+          name: v8_win_x64_release_lib
+          path: v8/v8/out.gn/x64.release
