@@ -43,9 +43,7 @@ jobs:
         shell: cmd
       - name: Configure Git
         shell: cmd
-        run: |
-          git config --global core.autocrlf false
-          git config --global core.filemode false
+        run: git config --global core.autocrlf false && git config --global core.filemode false
       - name: Download V8
         shell: cmd
         run: |
