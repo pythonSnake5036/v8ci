@@ -24,6 +24,10 @@ jobs:
           command: set PATH=C:\depot_tools;%PATH%
           shell: cmd.exe
       - run:
+          name: Setup gclient
+          shell: cmd.exe
+          command: gclient
+      - run:
           name: Configure Git
           shell: cmd.exe
           command: |
