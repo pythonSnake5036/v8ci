@@ -71,7 +71,7 @@ jobs:
       - name: Run Build
         working-directory: C:/v8/v8
         shell: cmd
-        run: ninja -C out.gn\x64.release v8_monolith
+        run: ninja -C out.gn\x64.release
       - uses: actions/upload-artifact@v3
         with:
           name: v8_win_x64_release_lib
