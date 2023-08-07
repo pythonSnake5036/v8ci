@@ -65,11 +65,12 @@ jobs:
         run: |
           echo "is_component_build = false" >> out.gn/x64.release/args.gn
           echo "v8_static_library = true" >> out.gn/x64.release/args.gn
+          echo "v8_monolithic = true" >> out.gn/x64.release/args.gn
           cat out.gn/x64.release/args.gn
       - name: Run Build
         working-directory: C:/v8/v8
         shell: cmd
-        run: ninja -C out.gn\x64.release
+        run: ninja -C out.gn\x64.release v8_monolith
       - uses: actions/upload-artifact@v3
         with:
           name: v8_win_x64_release_lib
