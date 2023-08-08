@@ -1,0 +1,72 @@
+# Use the latest 2.1 version of CircleCI pipeline process engine.
+# See: https://circleci.com/docs/configuration-reference
+version: 2.1
+orbs:
+  win: circleci/windows@5.0
+
+# Define a job to be invoked later in a workflow.
+# See: https://circleci.com/docs/configuration-reference/#jobs
+jobs:
+  build-win:
+    executor:
+      name: win/default
+      size: large
+    environment:
+      DEPOT_TOOLS_WIN_TOOLCHAIN: 0
+    steps:
+      - run:
+          name: Install Windows 10 SDK
+          command: |
+            Invoke-WebRequest -Uri https://go.microsoft.com/fwlink/?linkid=2237387 -OutFile "C:\winsdksetup.exe"
+            C:\winsdksetup.exe /features + /quiet /norestart
+      - run:
+          name: Install depot_tools
+          command: |
+            Invoke-WebRequest -Uri "https://storage.googleapis.com/chrome-infra/depot_tools.zip" -OutFile "C:\depot_tools.zip"
+            Expand-Archive -LiteralPath 'C:\depot_tools.zip' -DestinationPath 'C:\depot_tools'
+      - run:
+          name: Setup gclient
+          shell: cmd.exe
+          command: set PATH=C:\depot_tools;%PATH% && gclient
+      - run:
+          name: Configure Git
+          shell: cmd.exe
+          command: git config --global core.autocrlf false && git config --global core.filemode false
+      - run:
+          name: Download V8
+          shell: cmd.exe
+          command: set PATH=C:\depot_tools;%PATH% && mkdir v8 && cd v8 && fetch v8
+      - run:
+          name: Download build dependencies
+          shell: cmd.exe
+          command: set PATH=C:\depot_tools;%PATH% && cd v8\v8 && gclient sync
+      - run:
+          name: Generate Build Files
+          shell: cmd.exe
+          command: set PATH=C:\depot_tools;%PATH% && cd v8\v8 && python3 tools\dev\v8gen.py -vv x64.release
+      - run:
+          name: Configure Build
+          shell: bash.exe
+          command: |
+            cd v8/v8
+            echo "is_component_build = false" >> out.gn/x64.release/args.gn
+            echo "v8_static_library = true" >> out.gn/x64.release/args.gn
+            cat out.gn/x64.release/args.gn
+      - run:
+          name: Run Build
+          shell: cmd.exe
+          command: set PATH=C:\depot_tools;%PATH% && cd v8\v8 && ninja -C out.gn\x64.release
+      - run:
+          name: Copy Build Files
+          shell: bash.exe
+          command: cp -r v8/v8/out.gn/x64.release /tmp/v8_x64_release
+      - store_artifacts:
+          path: /tmp/v8_x64_release
+          destination: v8_x64_release
+
+# Orchestrate jobs using workflows
+# See: https://circleci.com/docs/configuration-reference/#workflows
+workflows:
+  build:
+    jobs:
+      - build-win
